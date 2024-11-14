@@ -1,6 +1,6 @@
-import { objectToCamelSavePrefix } from '../lib/caseConvert';
 import {
   objectToCamel,
+  objectToCamelPrefix,
   objectToSnake,
   toSnake,
   ToCamel,
@@ -398,7 +398,7 @@ const _s243: AssertEqual<I243, ObjectToSnake<I2432>> = true;
 
 describe('Property name converter with prefix preservation', () => {
   it('preserves underscore prefixes while converting to camelCase', () => {
-    const testToCamel = objectToCamelSavePrefix({
+    const testToCamel = objectToCamelPrefix({
       _tag: 'test',
       __private: 'secret',
       ___deeply_private: 'very secret',
@@ -456,7 +456,7 @@ describe('Property name converter with prefix preservation', () => {
   });
 
   it('handles edge cases with prefixes', () => {
-    const testToCamel = objectToCamelSavePrefix({
+    const testToCamel = objectToCamelPrefix({
       _: 'single underscore',
       __: 'double underscore',
       ___: 'triple underscore',
@@ -477,7 +477,7 @@ describe('Property name converter with prefix preservation', () => {
   });
 
   it('preserves dollar sign prefixes', () => {
-    const testToCamel = objectToCamelSavePrefix({
+    const testToCamel = objectToCamelPrefix({
       $schema: 'http://schema',
       $ref: 'reference',
       normal_value: 'normal',
@@ -516,6 +516,6 @@ describe('Property name converter with prefix preservation', () => {
 
   const _typeTest: AssertEqual<
     ConvertedType,
-    ReturnType<typeof objectToCamelSavePrefix<TestInterface>>
+    ReturnType<typeof objectToCamelPrefix<TestInterface>>
   > = true;
 });

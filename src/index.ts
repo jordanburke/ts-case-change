@@ -1,5 +1,6 @@
 export {
   objectToCamel,
+  objectToCamelPrefix,
   objectToSnake,
   toSnake,
   toCamel,
@@ -9,6 +10,7 @@ export {
 
 export type {
   ObjectToCamel,
+  ObjectToCamelPrefix,
   ObjectToSnake,
   ToSnake,
   ToCamel,

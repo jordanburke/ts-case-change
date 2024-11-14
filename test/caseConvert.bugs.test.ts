@@ -4,7 +4,7 @@ import {
   ObjectToSnake,
   objectToCamel,
   objectToSnake,
-} from '../src/caseConvert';
+} from '../src';
 
 describe('bug fixes', () => {
   it('#50 - Does not handle an array of objects correctly', () => {

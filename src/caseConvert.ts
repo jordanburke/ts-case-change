@@ -59,6 +59,11 @@ export function objectToCamel<T extends object>(obj: T): ObjectToCamel<T> {
   return convertObject(obj, toCamel);
 }
 
+export function objectToCamelPrefix<T extends object>(obj: T): ObjectToCamelPrefix<T> {
+  return convertObjectSavePrefix(obj);
+}
+
+
 export function toSnake<T extends string>(term: T): ToSnake<T> {
   let result: string = term;
   let circuitBreaker = 0;
@@ -245,6 +250,108 @@ export type ObjectToSnake<T extends object | undefined | null> =
           ? ObjectToSnake<T[K]>
           : T[K];
       };
+
+// Helper type to match underscore prefix of any length
+type UnderscorePrefix<S extends string> = S extends `${infer P}${infer R}`
+  ? P extends '_'
+    ? `_${UnderscorePrefix<R>}`
+    : ''
+  : ''
+
+// New type for handling prefixed camelCase with multiple underscore support
+type ToCamelSavePrefix<S extends string | number | symbol> = S extends string
+  ? S extends `${UnderscorePrefix<S>}${infer Rest}`
+    ? `${UnderscorePrefix<S>}${ToCamel<Rest>}`
+    : S extends `$${infer Rest}`
+      ? `$${ToCamel<Rest>}`
+      : S extends `${infer Head}_${infer Tail}`
+        ? `${ToCamel<Uncapitalize<Head>>}${Capitalize<ToCamel<Tail>>}`
+        : S extends `${infer Head}-${infer Tail}`
+          ? `${ToCamel<Uncapitalize<Head>>}${Capitalize<ToCamel<Tail>>}`
+          : Uncapitalize<S>
+  : never
+
+export type ObjectToCamelPrefix<T extends object | undefined | null> = T extends undefined
+  ? undefined
+  : T extends null
+    ? null
+    : T extends Array<infer ArrayType>
+      ? ArrayType extends object
+        ? Array<ObjectToCamelPrefix<ArrayType>>
+        : Array<ArrayType>
+      : T extends Uint8Array
+        ? Uint8Array
+        : T extends Date
+          ? Date
+          : {
+            [K in keyof T as ToCamelSavePrefix<K>]: T[K] extends Array<infer ArrayType> | undefined | null
+              ? ArrayType extends object
+                ? Array<ObjectToCamelPrefix<ArrayType>>
+                : Array<ArrayType>
+              : T[K] extends object | undefined | null
+                ? ObjectToCamelPrefix<T[K]>
+                : T[K]
+          }
+
+function getPrefix(key: string): string {
+  if (key.startsWith('$')) return '$';
+  const matches = key.match(/^(_+)/);
+  return matches ? matches[1] : '';
+}
+
+export function toCamelSavePrefix(term: string): string {
+  const prefix = getPrefix(term);
+  if (!prefix) {
+    return term.length === 1
+      ? term.toLowerCase()
+      : term
+        .replace(/^([A-Z])/, (m) => m[0].toLowerCase())
+        .replace(/[_-]([a-z0-9])/g, (m) => m[1].toUpperCase());
+  }
+
+  // Get the remainder after the prefix and convert it to camelCase
+  const remainder = term.slice(prefix.length);
+  const parts = remainder.split(/[_-]/g);
+
+  const camelRemainder = parts
+    .map((part, index) =>
+      index === 0
+        ? part.toLowerCase()
+        : part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+    )
+    .join('');
+
+  return `${prefix}${camelRemainder}`;
+}
+
+function convertObjectSavePrefix<T extends object>(
+  obj: T
+): ObjectToCamelPrefix<T> {
+  if (obj === null || typeof obj === 'undefined' || typeof obj !== 'object') {
+    return obj as unknown as ObjectToCamelPrefix<T>;
+  }
+
+  const out = (Array.isArray(obj) ? [] : {}) as Record<string, any>;
+
+  for (const [k, v] of Object.entries(obj)) {
+    const newKey = toCamelSavePrefix(k);
+
+    out[newKey] = Array.isArray(v)
+      ? v.map((item) =>
+        typeof item === 'object' &&
+        !(item instanceof Uint8Array) &&
+        !(item instanceof Date)
+          ? convertObjectSavePrefix(item)
+          : item,
+      )
+      : v instanceof Uint8Array || v instanceof Date
+        ? v
+        : typeof v === 'object' && v !== null
+          ? convertObjectSavePrefix(v)
+          : v;
+  }
+  return out as unknown as ObjectToCamelPrefix<T>;
+}
 
 type CapitalLetters =
   | 'A'

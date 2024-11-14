@@ -1,3 +1,4 @@
+import { objectToCamelSavePrefix } from '../lib/caseConvert';
 import {
   objectToCamel,
   objectToSnake,
@@ -9,7 +10,7 @@ import {
   toPascal,
   objectToPascal,
   ToPascal,
-} from '../src/caseConvert';
+} from '../src';
 
 describe('Property name converter', () => {
   it('converts to camelCase', () => {
@@ -394,3 +395,127 @@ interface I2432 {
 const _c2432: I2432 = objectToCamel(_c243);
 
 const _s243: AssertEqual<I243, ObjectToSnake<I2432>> = true;
+
+describe('Property name converter with prefix preservation', () => {
+  it('preserves underscore prefixes while converting to camelCase', () => {
+    const testToCamel = objectToCamelSavePrefix({
+      _tag: 'test',
+      __private: 'secret',
+      ___deeply_private: 'very secret',
+      hello_world: 'helloWorld',
+      a_number: 5,
+      an_array: [1, 2, 4],
+      null_object: null,
+      undef_object: undefined,
+      an_array_of_objects: [{ _id: 'id1', a_b: 'ab', _ref: 'ref1' }],
+      an_object: {
+        _type: 'type1',
+        a_1: 'a1',
+        __internal: 'internal',
+        a_2: 'a2',
+        a_3: {
+          _b_4: 'b4',
+          normal_value: 'normal'
+        },
+      },
+      ['a-kebab']: 'k1',
+    });
+
+    // Verify prefix preservation
+    expect('_tag' in testToCamel).toStrictEqual(true);
+    expect('__private' in testToCamel).toStrictEqual(true);
+    expect('___deeplyPrivate' in testToCamel).toStrictEqual(true);
+
+    // Verify normal camelCase conversion
+    expect('helloWorld' in testToCamel).toStrictEqual(true);
+    expect('hello_world' in testToCamel).not.toStrictEqual(true);
+
+    // Check values and nested structure
+    expect(testToCamel._tag).toEqual('test');
+    expect(testToCamel.__private).toEqual('secret');
+    expect(testToCamel.___deeplyPrivate).toEqual('very secret');
+    expect(testToCamel.aNumber).toEqual(5);
+    expect(testToCamel.helloWorld).toEqual('helloWorld');
+    expect(testToCamel.anArray).toEqual([1, 2, 4]);
+    expect(testToCamel.nullObject).toBeNull();
+    expect(testToCamel.undefObject).toBeUndefined();
+
+    // Check nested objects with prefixes
+    expect(testToCamel.anArrayOfObjects[0]._id).toEqual('id1');
+    expect(testToCamel.anArrayOfObjects[0]._ref).toEqual('ref1');
+    expect(testToCamel.anArrayOfObjects[0].aB).toEqual('ab');
+
+    // Check deeply nested objects with prefixes
+    expect(testToCamel.anObject._type).toEqual('type1');
+    expect(testToCamel.anObject.__internal).toEqual('internal');
+    expect(testToCamel.anObject.a1).toEqual('a1');
+    expect(testToCamel.anObject.a2).toEqual('a2');
+    expect(testToCamel.anObject.a3._b4).toEqual('b4');
+    expect(testToCamel.anObject.a3.normalValue).toEqual('normal');
+    expect(testToCamel.aKebab).toEqual('k1');
+  });
+
+  it('handles edge cases with prefixes', () => {
+    const testToCamel = objectToCamelSavePrefix({
+      _: 'single underscore',
+      __: 'double underscore',
+      ___: 'triple underscore',
+      ___a: 'triple underscore',
+      _a_b_c: 'underscore abc',
+      __a_b_c: 'double underscore abc',
+      ___a_b_c: 'triple underscore abc',
+      normal_case: 'normal'
+    });
+
+    expect(testToCamel._).toEqual('single underscore');
+    expect(testToCamel.__).toEqual('double underscore');
+    expect(testToCamel.___).toEqual('triple underscore');
+    expect(testToCamel._aBC).toEqual('underscore abc');
+    expect(testToCamel.__aBC).toEqual('double underscore abc');
+    expect(testToCamel.___aBC).toEqual('triple underscore abc');
+    expect(testToCamel.normalCase).toEqual('normal');
+  });
+
+  it('preserves dollar sign prefixes', () => {
+    const testToCamel = objectToCamelSavePrefix({
+      $schema: 'http://schema',
+      $ref: 'reference',
+      normal_value: 'normal',
+      nested_object: {
+        $type: 'type',
+        normal_prop: 'normal'
+      }
+    });
+
+    expect(testToCamel.$schema).toEqual('http://schema');
+    expect(testToCamel.$ref).toEqual('reference');
+    expect(testToCamel.normalValue).toEqual('normal');
+    expect(testToCamel.nestedObject.$type).toEqual('type');
+    expect(testToCamel.nestedObject.normalProp).toEqual('normal');
+  });
+
+  interface TestInterface {
+    _tag: string;
+    __private: string;
+    normal_value: string;
+    nested_object: {
+      _type: string;
+      some_value: number;
+    };
+  }
+
+  type ConvertedType = {
+    _tag: string;
+    __private: string;
+    normalValue: string;
+    nestedObject: {
+      _type: string;
+      someValue: number;
+    };
+  }
+
+  const _typeTest: AssertEqual<
+    ConvertedType,
+    ReturnType<typeof objectToCamelSavePrefix<TestInterface>>
+  > = true;
+});

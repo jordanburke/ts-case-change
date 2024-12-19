@@ -1,12 +1,12 @@
-const { javascript, typescript, ProjectType } = require('projen');
+const { javascript, typescript } = require('projen');
 
 const project = new typescript.TypeScriptProject({
   defaultReleaseBranch: 'main',
   jsiiFqn: 'projen.TypeScriptProject',
-  name: 'ts-case-convert',
-  authorEmail: 'ross@UniversalConstructor.co.uk',
-  authorName: 'Ross Williams',
-  authorOrganization: 'Universal Constructor',
+  name: '@jordanburke/ts-case-convert',
+  authorEmail: 'jordan.burke@gmail.com',
+  authorName: 'Jordan Burke',
+  authorOrganization: 'Jordan Burke',
   description:
     'Typescript type-preserving conversion of objects between camelCase and snake_case',
   entrypoint: 'lib/index.js',
@@ -21,12 +21,11 @@ const project = new typescript.TypeScriptProject({
     'pascal-case',
   ],
   packageManager: javascript.NodePackageManager.YARN_CLASSIC,
-  repository: 'https://github.com/RossWilliams/ts-case-convert.git',
+  repository: 'https://github.com/jordanburke/ts-case-convert.git',
   codeCov: true,
   codeCovTokenSecret: 'CODECOV_TOKEN',
   releaseToNpm: true,
   license: 'Apache-2.0',
-  projectType: ProjectType.LIBRARY,
   tsconfig: {
     compilerOptions: {
       noUnusedLocals: false,

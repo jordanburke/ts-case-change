@@ -7,7 +7,8 @@
   "root": true,
   "plugins": [
     "@typescript-eslint",
-    "import"
+    "import",
+    "@stylistic"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -45,7 +46,10 @@
     "indent": [
       "off"
     ],
-    "@typescript-eslint/indent": "off",
+    "@stylistic/indent": [
+      "error",
+      2
+    ],
     "quotes": [
       "error",
       "single",
@@ -110,7 +114,7 @@
       "multi-line",
       "consistent"
     ],
-    "@typescript-eslint/member-delimiter-style": [
+    "@stylistic/member-delimiter-style": [
       "error"
     ],
     "semi": [
@@ -162,7 +166,7 @@
         }
       }
     ],
-    "no-duplicate-imports": [
+    "import/no-duplicates": [
       "error"
     ],
     "no-shadow": [
@@ -212,6 +216,7 @@
       }
     ],
     "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/indent": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
       {

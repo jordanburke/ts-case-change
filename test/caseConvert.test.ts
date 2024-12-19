@@ -322,8 +322,8 @@ interface I24 {
     aProp: string;
     bProp:
       | {
-          cProp: string;
-        }
+        cProp: string;
+      }
       | undefined;
   };
 }
@@ -333,8 +333,8 @@ interface I242 {
     a_prop: string;
     b_prop:
       | {
-          c_prop: string;
-        }
+        c_prop: string;
+      }
       | undefined;
   };
 }

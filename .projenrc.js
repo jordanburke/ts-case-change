@@ -42,7 +42,7 @@ const project = new typescript.TypeScriptProject({
   jestOptions: {
     configFilePath: 'jest.config.json',
   },
-  gitignore: ['.cache_ggshield'],
+  gitignore: ['.cache_ggshield', '.idea'],
 });
 
 project.eslint.addRules({

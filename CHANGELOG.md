@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0] (2025-06-07)
+
+### Features
+
+* Fixed nullable array types handling for better type inference
+* Switched build system to tsup for improved performance
+* Migrated package management to pnpm
+
+### [2.2.1] (2025-12-19)
+
+### Features
+
+* Added `objectToCamelPrefix` function to preserve prefixes like `_` or `$` when converting to camelCase
+
 ### [1.1.2](https://github.com/RossWilliams/ts-case-convert/compare/v1.1.1...v1.1.2) (2021-03-31)
 
 ### [1.1.1](https://github.com/RossWilliams/ts-case-convert/compare/v1.1.0...v1.1.1) (2021-03-31)

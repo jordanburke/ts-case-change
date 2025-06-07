@@ -25,11 +25,12 @@ ts-case-change converts object keys between camelCase and snake_case while prese
 ## Installation
 
 ```sh
-npm install ts-case-change
-# or
-yarn add ts-case-change
-# or 
+# Recommended
 pnpm add ts-case-change
+
+# Alternative package managers
+npm install ts-case-change
+yarn add ts-case-change
 ```
 
 ## Usage
@@ -37,6 +38,7 @@ pnpm add ts-case-change
 ```typescript
 import { objectToCamel, objectToSnake, objectToPascal, objectToCamelPrefix } from 'ts-case-change';
 
+// Convert from snake_case to camelCase
 const camel = objectToCamel({
   hello_world: 'helloWorld',
   a_number: 5,
@@ -51,9 +53,10 @@ const camel = objectToCamel({
 });
 
 type CheckCamel = typeof camel.anArrayOfObjects[0]['aB']; // -> 'string'
-const ab: CheckCamel = camel.anArrayOfObjects[0]['aB']; // -> valid
+const camelValue: CheckCamel = camel.anArrayOfObjects[0]['aB']; // -> valid
 console.log(camel.anArrayOfObjects[0].aB); // -> 'ab'
 
+// Convert from camelCase to snake_case
 const snake = objectToSnake({
   helloWorld: 'helloWorld',
   aNumber: 5,
@@ -68,8 +71,26 @@ const snake = objectToSnake({
 });
 
 type CheckSnake = typeof snake.an_array_of_objects[0]['a_b']; // -> 'string'
-const ab: CheckSnake = snake.an_array_of_objects[0]['a_b']; // -> valid
+const snakeValue: CheckSnake = snake.an_array_of_objects[0]['a_b']; // -> valid
 console.log(snake.an_array_of_objects[0].a_b); // -> 'ab'
+
+// Convert to camelCase while preserving prefixes like _ and $
+const prefixCamel = objectToCamelPrefix({
+  _hello_world: 'helloWorld',
+  $a_number: 5,
+  an_array_with_$prefix: ['$value1', '$value2'],
+  _nested_object: {
+    _inner_value: 'innerValue',
+    $dollar_prefix: 'dollarPrefix'
+  }
+});
+
+// Prefixes are preserved
+console.log(prefixCamel._helloWorld); // -> 'helloWorld'
+console.log(prefixCamel.$aNumber); // -> 5
+console.log(prefixCamel.anArrayWith$prefix); // -> ['$value1', '$value2']
+console.log(prefixCamel._nestedObject._innerValue); // -> 'innerValue'
+console.log(prefixCamel._nestedObject.$dollarPrefix); // -> 'dollarPrefix'
 ```
 
 ## Development
@@ -82,6 +103,14 @@ pnpm build
 ### Running tests
 ```sh
 pnpm test
+pnpm test:watch  # Run tests in watch mode
+pnpm test:coverage  # Run tests with coverage report
+```
+
+### Code quality
+```sh
+pnpm lint  # Run ESLint
+pnpm format  # Format code with Prettier
 ```
 
 ## Documentation
@@ -95,5 +124,5 @@ This project is a fork of [ts-case-convert](https://github.com/RossWilliams/ts-c
 ## 📝 License
 
 Copyright © 2021 [Ross Williams](https://github.com/RossWilliams) (original author)<br />
-Copyright © 2024 [Jordan Burke](https://github.com/jordanburke) (modifications and enhancements)<br />
+Copyright © 2025 [Jordan Burke](https://github.com/jordanburke)<br />
 This project is [Apache-2.0](https://github.com/jordanburke/ts-case-change/blob/master/LICENSE) licensed.

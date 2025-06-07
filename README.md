@@ -1,28 +1,42 @@
-<h1 align="center">ts-case-convert</h1>
+<h1 align="center">ts-case-change</h1>
 <p>
-  <a href="https://codecov.io/gh/RossWilliams/ts-case-convert">
-    <img src="https://codecov.io/gh/RossWilliams/ts-case-convert/branch/main/graph/badge.svg?token=LO2GB8K44W"/>
-  </a>
-  <a href="https://badge.fury.io/js/ts-case-convert"><img src="https://badge.fury.io/js/ts-case-convert.svg" alt="npm version" height="18"></a>
-  <img alt="npm bundle size" src="https://img.shields.io/bundlephobia/minzip/ts-case-convert?style=flat">
-  <img alt="npm type definitions" src="https://img.shields.io/npm/types/ts-case-convert?style=flat">
-  <img alt="GitHub package.json dependency version (dev dep on branch)" src="https://img.shields.io/github/package-json/dependency-version/rosswilliams/ts-case-convert/dev/typescript">
-  <a href="https://github.com/RossWilliams/ts-case-convert#readme" target="_blank">
+  <img alt="npm bundle size" src="https://img.shields.io/bundlephobia/minzip/ts-case-change?style=flat">
+  <img alt="npm type definitions" src="https://img.shields.io/npm/types/ts-case-change?style=flat">
+  <a href="https://github.com/jordanburke/ts-case-change#readme" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
-  <a href="https://github.com/RossWilliams/ts-case-convert/graphs/commit-activity" target="_blank">
-    <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
-  </a>
-  <a href="https://github.com/RossWilliams/ts-case-convert/blob/master/LICENSE" target="_blank">
-    <img alt="License: Apache--2.0" src="https://img.shields.io/github/license/RossWilliams/ts-case-convert" />
+  <a href="https://github.com/jordanburke/ts-case-change/blob/master/LICENSE" target="_blank">
+    <img alt="License: Apache--2.0" src="https://img.shields.io/github/license/jordanburke/ts-case-change" />
   </a>
 </p>
 
-ts-case-convert converts object keys between camelCase and snake_case while preserving Typescript type information, code completion, and type validation. See tests for detailed conversion tests.
+ts-case-change converts object keys between camelCase and snake_case while preserving Typescript type information, code completion, and type validation. See tests for detailed conversion tests.
+
+## Features
+
+- Convert objects from snake_case to camelCase
+- Convert objects from camelCase to snake_case
+- Convert objects to PascalCase
+- Preserve prefix characters like `_` and `$` during conversion
+- Maintain full TypeScript type safety throughout conversion
+- Handle nested objects and arrays
+- Special handling for Date objects and Uint8Array/Buffer
+
+## Installation
+
+```sh
+npm install ts-case-change
+# or
+yarn add ts-case-change
+# or 
+pnpm add ts-case-change
+```
 
 ## Usage
 
 ```typescript
+import { objectToCamel, objectToSnake, objectToPascal, objectToCamelPrefix } from 'ts-case-change';
+
 const camel = objectToCamel({
   hello_world: 'helloWorld',
   a_number: 5,
@@ -38,7 +52,7 @@ const camel = objectToCamel({
 
 type CheckCamel = typeof camel.anArrayOfObjects[0]['aB']; // -> 'string'
 const ab: CheckCamel = camel.anArrayOfObjects[0]['aB']; // -> valid
-console.log(camel.anArrayOfObjects.aB); // -> 'ab'
+console.log(camel.anArrayOfObjects[0].aB); // -> 'ab'
 
 const snake = objectToSnake({
   helloWorld: 'helloWorld',
@@ -55,20 +69,31 @@ const snake = objectToSnake({
 
 type CheckSnake = typeof snake.an_array_of_objects[0]['a_b']; // -> 'string'
 const ab: CheckSnake = snake.an_array_of_objects[0]['a_b']; // -> valid
-console.log(snake.an_array_of_objects.a_b); // -> 'ab'
+console.log(snake.an_array_of_objects[0].a_b); // -> 'ab'
 ```
 
-## Run tests
+## Development
 
+### Building the project
 ```sh
-yarn run test
+pnpm build
+```
+
+### Running tests
+```sh
+pnpm test
 ```
 
 ## Documentation
 
-See [tests](./test/caseConvert.test.ts).
+See [tests](./test/caseConvert.test.ts) for detailed examples.
+
+## Acknowledgments
+
+This project is a fork of [ts-case-convert](https://github.com/RossWilliams/ts-case-convert) by Ross Williams.
 
 ## 📝 License
 
-Copyright © 2021 [Ross Williams](https://github.com/RossWilliams).<br />
-This project is [Apache--2.0](https://github.com/RossWilliams/ts-case-convert/blob/master/LICENSE) licensed.
+Copyright © 2021 [Ross Williams](https://github.com/RossWilliams) (original author)<br />
+Copyright © 2024 [Jordan Burke](https://github.com/jordanburke) (modifications and enhancements)<br />
+This project is [Apache-2.0](https://github.com/jordanburke/ts-case-change/blob/master/LICENSE) licensed.

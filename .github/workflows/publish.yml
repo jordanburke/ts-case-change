@@ -1,0 +1,84 @@
+name: Publish Package
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (patch, minor, major, or specific version)'
+        required: true
+        default: 'patch'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Lint
+        run: pnpm lint
+      
+      - name: Build
+        run: pnpm build
+      
+      - name: Test
+        run: pnpm test:coverage
+      
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+      
+      - name: Bump version
+        id: version
+        run: |
+          if [[ "${{ github.event.inputs.version }}" =~ ^(patch|minor|major)$ ]]; then
+            npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          else
+            npm version ${{ github.event.inputs.version }} --no-git-tag-version --allow-same-version
+          fi
+          echo "new_version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      
+      - name: Commit changes
+        run: |
+          git add package.json
+          git commit -m "chore: bump version to ${{ steps.version.outputs.new_version }}"
+      
+      - name: Push changes
+        run: git push
+      
+      - name: Create tag
+        run: |
+          git tag v${{ steps.version.outputs.new_version }}
+          git push --tags
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.new_version }}
+          name: Release ${{ steps.version.outputs.new_version }}
+          generate_release_notes: true
+      
+      - name: Publish to npm
+        run: pnpm publish --no-git-checks --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

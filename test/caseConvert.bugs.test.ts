@@ -150,6 +150,42 @@ describe('bug fixes', () => {
     expect(snakeObject.aaa_bbb_1).toEqual('a');
     expect(Object.keys(snakeObject)).toHaveLength(1);
   });
+
+  it('Array of nullable arrays type preservation', () => {
+    // Test for the bug where string[] | null might be incorrectly typed as just string[]
+    interface OriginalType {
+      string_array_or_null: (string[] | null)[];
+      nested: {
+        nullable_array: string[] | null;
+        array_of_nullable: (string | null)[];
+      };
+    }
+
+    // Check that types are preserved correctly
+    type CamelCase = ObjectToCamel<OriginalType>;
+    
+    // Create test data
+    const original: OriginalType = {
+      string_array_or_null: [['a', 'b'], null, ['c']],
+      nested: {
+        nullable_array: ['test'],
+        array_of_nullable: ['a', null, 'b']
+      }
+    };
+
+    // Convert and verify runtime behavior
+    const camelCase = objectToCamel(original);
+    
+    // This should compile if types are correct
+    const nullableArray: (string[] | null)[] = camelCase.stringArrayOrNull;
+    const nestedNullable: string[] | null = camelCase.nested.nullableArray;
+    
+    // Verify actual values
+    expect(camelCase.stringArrayOrNull[0]).toEqual(['a', 'b']);
+    expect(camelCase.stringArrayOrNull[1]).toBeNull();
+    expect(camelCase.nested.nullableArray).toEqual(['test']);
+    expect(camelCase.nested.arrayOfNullable).toContain(null);
+  });
 });
 
 // Bug #50
@@ -220,4 +256,14 @@ const _pascalDate: ObjectToPascal<{
   MyDate: new Date(),
   ArrDate: [new Date()],
   Nested: { InnerDate: new Date() },
+};
+
+// Test for nullable array types
+type NullableArrayCheck = ObjectToCamel<{
+  array_of_nullables: (string[] | null)[];
+}>;
+
+// This should be true if the type is preserved correctly
+const _nullableArrayCheck: NullableArrayCheck = {
+  arrayOfNullables: [['a'], null, ['b']]
 };

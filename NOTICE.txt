@@ -1,0 +1,5 @@
+ts-case-change
+Copyright 2025 Jordan Burke
+
+This product is a fork of ts-case-convert, originally created by Ross Williams.
+Original work Copyright 2021 Ross Williams (https://github.com/RossWilliams/ts-case-convert)

@@ -3,7 +3,7 @@ function convertObject<
   TResult extends ObjectToCamel<TInput> | ObjectToSnake<TInput> | ObjectToPascal<TInput>,
 >(obj: TInput, keyConverter: (arg: string) => string): TResult {
   if (obj === null || typeof obj === "undefined" || typeof obj !== "object") {
-    return obj
+    return obj as unknown as TResult
   }
 
   const out = (Array.isArray(obj) ? [] : {}) as TResult
@@ -109,18 +109,20 @@ export type ObjectToCamel<T extends object | undefined | null> = T extends undef
         : T extends Date
           ? Date
           : {
-              [K in keyof T as ToCamel<K>]: T[K] extends Array<infer ArrayType> | null
-                ? T[K] extends null
-                  ? null
-                  : Array<
-                      // Preserve union types within arrays
-                      ArrayType extends object ? ObjectToCamel<ArrayType> : ArrayType
-                    >
-                : T[K] extends undefined | null
-                  ? T[K]
-                  : T[K] extends object
-                    ? ObjectToCamel<T[K]>
-                    : T[K]
+              [K in keyof T as ToCamel<K>]: 
+                // Handle nullable arrays directly
+                T[K] extends (infer U)[] | null 
+                  ? U[] | null 
+                  : T[K] extends Array<infer ArrayType> 
+                    ? Array<
+                        // Preserve union types within arrays
+                        ArrayType extends object ? ObjectToCamel<ArrayType> : ArrayType
+                      >
+                    : T[K] extends undefined | null
+                      ? T[K]
+                      : T[K] extends object
+                        ? ObjectToCamel<T[K]>
+                        : T[K]
             }
 
 export type ToPascal<S extends string | number | symbol> = S extends string
@@ -145,18 +147,20 @@ export type ObjectToPascal<T extends object | undefined | null> = T extends unde
         : T extends Date
           ? Date
           : {
-              [K in keyof T as ToPascal<K>]: T[K] extends Array<infer ArrayType> | null
-                ? T[K] extends null
-                  ? null
-                  : Array<
-                      // Preserve union types within arrays
-                      ArrayType extends object ? ObjectToPascal<ArrayType> : ArrayType
-                    >
-                : T[K] extends undefined | null
-                  ? T[K]
-                  : T[K] extends object
-                    ? ObjectToPascal<T[K]>
-                    : T[K]
+              [K in keyof T as ToPascal<K>]: 
+                // Handle nullable arrays directly
+                T[K] extends (infer U)[] | null 
+                  ? U[] | null 
+                  : T[K] extends Array<infer ArrayType> 
+                    ? Array<
+                        // Preserve union types within arrays
+                        ArrayType extends object ? ObjectToPascal<ArrayType> : ArrayType
+                      >
+                    : T[K] extends undefined | null
+                      ? T[K]
+                      : T[K] extends object
+                        ? ObjectToPascal<T[K]>
+                        : T[K]
             }
 
 export type ToSnake<S extends string | number | symbol> = S extends string
@@ -220,18 +224,20 @@ export type ObjectToSnake<T extends object | undefined | null> = T extends undef
         : T extends Date
           ? Date
           : {
-              [K in keyof T as ToSnake<K>]: T[K] extends Array<infer ArrayType> | null
-                ? T[K] extends null
-                  ? null
-                  : Array<
-                      // Preserve union types within arrays
-                      ArrayType extends object ? ObjectToSnake<ArrayType> : ArrayType
-                    >
-                : T[K] extends undefined | null
-                  ? T[K]
-                  : T[K] extends object
-                    ? ObjectToSnake<T[K]>
-                    : T[K]
+              [K in keyof T as ToSnake<K>]: 
+                // Handle nullable arrays directly
+                T[K] extends (infer U)[] | null 
+                  ? U[] | null 
+                  : T[K] extends Array<infer ArrayType> 
+                    ? Array<
+                        // Preserve union types within arrays
+                        ArrayType extends object ? ObjectToSnake<ArrayType> : ArrayType
+                      >
+                    : T[K] extends undefined | null
+                      ? T[K]
+                      : T[K] extends object
+                        ? ObjectToSnake<T[K]>
+                        : T[K]
             }
 
 // Helper type to match underscore prefix of any length
@@ -268,18 +274,20 @@ export type ObjectToCamelPrefix<T extends object | undefined | null> = T extends
         : T extends Date
           ? Date
           : {
-              [K in keyof T as ToCamelSavePrefix<K>]: T[K] extends Array<infer ArrayType> | null
-                ? T[K] extends null
-                  ? null
-                  : Array<
-                      // Preserve union types within arrays
-                      ArrayType extends object ? ObjectToCamelPrefix<ArrayType> : ArrayType
-                    >
-                : T[K] extends undefined | null
-                  ? T[K]
-                  : T[K] extends object
-                    ? ObjectToCamelPrefix<T[K]>
-                    : T[K]
+              [K in keyof T as ToCamelSavePrefix<K>]: 
+                // Handle nullable arrays directly
+                T[K] extends (infer U)[] | null 
+                  ? U[] | null 
+                  : T[K] extends Array<infer ArrayType> 
+                    ? Array<
+                        // Preserve union types within arrays
+                        ArrayType extends object ? ObjectToCamelPrefix<ArrayType> : ArrayType
+                      >
+                    : T[K] extends undefined | null
+                      ? T[K]
+                      : T[K] extends object
+                        ? ObjectToCamelPrefix<T[K]>
+                        : T[K]
             }
 
 function getPrefix(key: string): string {

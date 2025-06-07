@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.1] (2025-06-07)
+
+### Bug Fixes
+
+* Fixed type handling for nullable arrays (`string[] | null`) in all conversion utilities
+* Properly preserve null in union types to prevent TypeScript errors
+* Added comprehensive tests for nullable array type handling
+
 ## [2.3.0] (2025-06-07)
 
 ### Features

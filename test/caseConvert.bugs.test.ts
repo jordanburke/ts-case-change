@@ -65,8 +65,8 @@ describe("bug fixes", () => {
     const snakeRequest: SnakeCaseConvertedObjectWithArray = {
       object_array: [
         {
-          index: 0,
-          value: "abc",
+          Index: 0, 
+          Value: "abc",
         },
       ],
     }
@@ -74,7 +74,7 @@ describe("bug fixes", () => {
     expect(snakeRequest.object_array?.length).toEqual(1)
 
     snakeRequest.object_array?.forEach((value) => {
-      expect(value.index).toEqual(0)
+      expect(value.Index).toEqual(0)
     })
   })
 

@@ -6,7 +6,7 @@ export {
   toCamel,
   toPascal,
   objectToPascal,
-} from './caseConvert';
+} from "./caseConvert"
 
 export type {
   ObjectToCamel,
@@ -16,4 +16,4 @@ export type {
   ToCamel,
   ToPascal,
   ObjectToPascal,
-} from './caseConvert';
+} from "./caseConvert"

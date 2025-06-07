@@ -1,5 +1,5 @@
 {
-  "name": "@jordanburke/ts-case-change",
+  "name": "ts-case-change",
   "description": "Typescript type-preserving conversion of objects between camelCase and snake_case",
   "repository": {
     "type": "git",
@@ -13,6 +13,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src test --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "prepublishOnly": "pnpm run build"
   },
   "author": {
@@ -29,9 +31,14 @@
     "eslint": "^9",
     "eslint-import-resolver-typescript": "^3.7.0",
     "eslint-plugin-import": "^2.31.0",
+    "prettier": "^3.2.5",
     "tsup": "^8.5.0",
     "typescript": "5.7.2",
-    "vitest": "^3.2.2"
+    "vitest": "^3.2.2",
+    "@eslint/js": "^9.28.0",
+    "@eslint/eslintrc": "^3.3.1",
+    "eslint-plugin-functional": "^9.0.2",
+    "globals": "^16.2.0"
   },
   "keywords": [
     "PascalCase",

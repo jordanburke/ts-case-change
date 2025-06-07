@@ -109,14 +109,18 @@ export type ObjectToCamel<T extends object | undefined | null> = T extends undef
         : T extends Date
           ? Date
           : {
-              [K in keyof T as ToCamel<K>]: T[K] extends Array<infer ArrayType> | undefined | null
-                ? Array<
-                    // Preserve union types within arrays
-                    ArrayType extends object ? ObjectToCamel<ArrayType> : ArrayType
-                  >
-                : T[K] extends object | undefined | null
-                  ? ObjectToCamel<T[K]>
-                  : T[K]
+              [K in keyof T as ToCamel<K>]: T[K] extends Array<infer ArrayType> | null
+                ? T[K] extends null
+                  ? null
+                  : Array<
+                      // Preserve union types within arrays
+                      ArrayType extends object ? ObjectToCamel<ArrayType> : ArrayType
+                    >
+                : T[K] extends undefined | null
+                  ? T[K]
+                  : T[K] extends object
+                    ? ObjectToCamel<T[K]>
+                    : T[K]
             }
 
 export type ToPascal<S extends string | number | symbol> = S extends string
@@ -141,14 +145,18 @@ export type ObjectToPascal<T extends object | undefined | null> = T extends unde
         : T extends Date
           ? Date
           : {
-              [K in keyof T as ToPascal<K>]: T[K] extends Array<infer ArrayType> | undefined | null
-                ? Array<
-                    // Preserve union types within arrays
-                    ArrayType extends object ? ObjectToPascal<ArrayType> : ArrayType
-                  >
-                : T[K] extends object | undefined | null
-                  ? ObjectToPascal<T[K]>
-                  : T[K]
+              [K in keyof T as ToPascal<K>]: T[K] extends Array<infer ArrayType> | null
+                ? T[K] extends null
+                  ? null
+                  : Array<
+                      // Preserve union types within arrays
+                      ArrayType extends object ? ObjectToPascal<ArrayType> : ArrayType
+                    >
+                : T[K] extends undefined | null
+                  ? T[K]
+                  : T[K] extends object
+                    ? ObjectToPascal<T[K]>
+                    : T[K]
             }
 
 export type ToSnake<S extends string | number | symbol> = S extends string
@@ -212,14 +220,18 @@ export type ObjectToSnake<T extends object | undefined | null> = T extends undef
         : T extends Date
           ? Date
           : {
-              [K in keyof T as ToSnake<K>]: T[K] extends Array<infer ArrayType> | undefined | null
-                ? Array<
-                    // Preserve union types within arrays
-                    ArrayType extends object ? ObjectToSnake<ArrayType> : ArrayType
-                  >
-                : T[K] extends object | undefined | null
-                  ? ObjectToSnake<T[K]>
-                  : T[K]
+              [K in keyof T as ToSnake<K>]: T[K] extends Array<infer ArrayType> | null
+                ? T[K] extends null
+                  ? null
+                  : Array<
+                      // Preserve union types within arrays
+                      ArrayType extends object ? ObjectToSnake<ArrayType> : ArrayType
+                    >
+                : T[K] extends undefined | null
+                  ? T[K]
+                  : T[K] extends object
+                    ? ObjectToSnake<T[K]>
+                    : T[K]
             }
 
 // Helper type to match underscore prefix of any length
@@ -256,14 +268,18 @@ export type ObjectToCamelPrefix<T extends object | undefined | null> = T extends
         : T extends Date
           ? Date
           : {
-              [K in keyof T as ToCamelSavePrefix<K>]: T[K] extends Array<infer ArrayType> | undefined | null
-                ? Array<
-                    // Preserve union types within arrays
-                    ArrayType extends object ? ObjectToCamelPrefix<ArrayType> : ArrayType
-                  >
-                : T[K] extends object | undefined | null
-                  ? ObjectToCamelPrefix<T[K]>
-                  : T[K]
+              [K in keyof T as ToCamelSavePrefix<K>]: T[K] extends Array<infer ArrayType> | null
+                ? T[K] extends null
+                  ? null
+                  : Array<
+                      // Preserve union types within arrays
+                      ArrayType extends object ? ObjectToCamelPrefix<ArrayType> : ArrayType
+                    >
+                : T[K] extends undefined | null
+                  ? T[K]
+                  : T[K] extends object
+                    ? ObjectToCamelPrefix<T[K]>
+                    : T[K]
             }
 
 function getPrefix(key: string): string {

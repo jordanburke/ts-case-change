@@ -1,4 +1,13 @@
-import { ObjectToCamel, ObjectToPascal, ObjectToSnake, objectToCamel, objectToSnake } from "../src"
+import {
+  ObjectToCamel,
+  ObjectToPascal,
+  ObjectToSnake,
+  ObjectToCamelPrefix,
+  objectToCamel,
+  objectToSnake,
+  objectToPascal,
+  objectToCamelPrefix,
+} from "../src"
 
 describe("bug fixes", () => {
   it("#50 - Does not handle an array of objects correctly", () => {
@@ -142,7 +151,7 @@ describe("bug fixes", () => {
     expect(Object.keys(snakeObject)).toHaveLength(1)
   })
 
-  it("Array of nullable arrays type preservation", () => {
+  it("Array of nullable arrays type preservation in objectToCamel", () => {
     // Test for the bug where string[] | null might be incorrectly typed as just string[]
     interface OriginalType {
       string_array_or_null: (string[] | null)[]
@@ -176,6 +185,150 @@ describe("bug fixes", () => {
     expect(camelCase.stringArrayOrNull[1]).toBeNull()
     expect(camelCase.nested.nullableArray).toEqual(["test"])
     expect(camelCase.nested.arrayOfNullable).toContain(null)
+
+    // Test direct null value for nullable array
+    const nullArrayOriginal: OriginalType = {
+      string_array_or_null: [["a", "b"], null, ["c"]],
+      nested: {
+        nullable_array: null,
+        array_of_nullable: ["a", null, "b"],
+      },
+    }
+
+    const nullArrayCamel = objectToCamel(nullArrayOriginal)
+    expect(nullArrayCamel.nested.nullableArray).toBeNull()
+  })
+
+  it("Array of nullable arrays type preservation in objectToPascal", () => {
+    // Define a type with nullable arrays
+    interface OriginalType {
+      string_array_or_null: (string[] | null)[]
+      nested: {
+        nullable_array: string[] | null
+        array_of_nullable: (string | null)[]
+      }
+    }
+
+    // Check that types are preserved correctly in Pascal case
+    type PascalCase = ObjectToPascal<OriginalType>
+
+    // Create test data
+    const original: OriginalType = {
+      string_array_or_null: [["a", "b"], null, ["c"]],
+      nested: {
+        nullable_array: null,
+        array_of_nullable: ["a", null, "b"],
+      },
+    }
+
+    // Convert and verify runtime behavior
+    const pascalCase = objectToPascal(original)
+
+    // These should compile if types are correct
+    const nullableArray: (string[] | null)[] = pascalCase.StringArrayOrNull
+    const nestedNullable: string[] | null = pascalCase.Nested.NullableArray
+
+    // Verify actual values
+    expect(pascalCase.StringArrayOrNull[0]).toEqual(["a", "b"])
+    expect(pascalCase.StringArrayOrNull[1]).toBeNull()
+    expect(pascalCase.Nested.NullableArray).toBeNull()
+    expect(pascalCase.Nested.ArrayOfNullable).toContain(null)
+  })
+
+  it("Array of nullable arrays type preservation in objectToSnake", () => {
+    // Define a type with nullable arrays in camelCase
+    interface CamelType {
+      stringArrayOrNull: (string[] | null)[]
+      nested: {
+        nullableArray: string[] | null
+        arrayOfNullable: (string | null)[]
+      }
+    }
+
+    // Check that types are preserved correctly in snake_case
+    type SnakeCase = ObjectToSnake<CamelType>
+
+    // Create test data
+    const camelData: CamelType = {
+      stringArrayOrNull: [["a", "b"], null, ["c"]],
+      nested: {
+        nullableArray: null,
+        arrayOfNullable: ["a", null, "b"],
+      },
+    }
+
+    // Convert and verify runtime behavior
+    const snakeCase = objectToSnake(camelData)
+
+    // These should compile if types are correct
+    const nullableArray: (string[] | null)[] = snakeCase.string_array_or_null
+    const nestedNullable: string[] | null = snakeCase.nested.nullable_array
+
+    // Verify actual values
+    expect(snakeCase.string_array_or_null[0]).toEqual(["a", "b"])
+    expect(snakeCase.string_array_or_null[1]).toBeNull()
+    expect(snakeCase.nested.nullable_array).toBeNull()
+    expect(snakeCase.nested.array_of_nullable).toContain(null)
+
+    // Test with a value in the nullable array
+    const camelDataWithArray: CamelType = {
+      stringArrayOrNull: [["a", "b"], null, ["c"]],
+      nested: {
+        nullableArray: ["test1", "test2"],
+        arrayOfNullable: ["a", null, "b"],
+      },
+    }
+
+    const snakeCaseWithArray = objectToSnake(camelDataWithArray)
+    expect(snakeCaseWithArray.nested.nullable_array).toEqual(["test1", "test2"])
+  })
+
+  it("Array of nullable arrays type preservation in objectToCamelPrefix", () => {
+    // Define a type with nullable arrays and prefixes
+    interface OriginalType {
+      _string_array_or_null: (string[] | null)[]
+      __nested: {
+        _nullable_array: string[] | null
+        array_of_nullable: (string | null)[]
+      }
+    }
+
+    // Check that types are preserved correctly
+    type CamelPrefixType = ObjectToCamelPrefix<OriginalType>
+
+    // Create test data
+    const original: OriginalType = {
+      _string_array_or_null: [["a", "b"], null, ["c"]],
+      __nested: {
+        _nullable_array: null,
+        array_of_nullable: ["a", null, "b"],
+      },
+    }
+
+    // Convert and verify runtime behavior
+    const camelPrefix = objectToCamelPrefix(original)
+
+    // These should compile if types are correct
+    const nullableArray: (string[] | null)[] = camelPrefix._stringArrayOrNull
+    const nestedNullable: string[] | null = camelPrefix.__nested._nullableArray
+
+    // Verify actual values and prefix preservation
+    expect(camelPrefix._stringArrayOrNull[0]).toEqual(["a", "b"])
+    expect(camelPrefix._stringArrayOrNull[1]).toBeNull()
+    expect(camelPrefix.__nested._nullableArray).toBeNull()
+    expect(camelPrefix.__nested.arrayOfNullable).toContain(null)
+
+    // Test with a value in the nullable array
+    const originalWithArray: OriginalType = {
+      _string_array_or_null: [["a", "b"], null, ["c"]],
+      __nested: {
+        _nullable_array: ["test1", "test2"],
+        array_of_nullable: ["a", null, "b"],
+      },
+    }
+
+    const camelPrefixWithArray = objectToCamelPrefix(originalWithArray)
+    expect(camelPrefixWithArray.__nested._nullableArray).toEqual(["test1", "test2"])
   })
 })
 
